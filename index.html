@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panagiotis Koromilas</title>
+<meta name="description" content="Panagiotis Koromilas, postdoctoral researcher in machine learning at the University of Athens and The Cyprus Institute.">
+<link rel="icon" href="face.jpg">
+<style>
+/* Colours: dark is the default, light is switched on with the button in the top-right corner. */
+:root {
+  --bg: #131414; --fg: #e7e7e4; --mute: #9b9b97; --a: #5fd4c4; --accent: #3fc2b0;
+  --rule: #2a2c2c; --panel: #181a1a; --panel-hover: #1d2020; --panel-on: #17211f; --accent-dim: #2f6b63;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #fbfbf9; --fg: #1b1b1b; --mute: #666; --a: #0f6f66; --accent: #0f766e;
+  --rule: #e3e3df; --panel: #fff; --panel-hover: #f6f6f3; --panel-on: #eef6f4; --accent-dim: #8cc5bd;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.62 "Avenir Next", Avenir, "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+main { position: relative; max-width: 43rem; margin: 0 auto; padding: 4rem 1.25rem; }
+a { color: var(--a); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul { list-style: none; margin: 0; padding: 0; }
+.serif { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 400; }
+
+/* Header */
+header { display: flex; align-items: center; gap: 1.5rem; }
+.me { flex: none; width: 128px; height: 128px; border-radius: 50%; object-fit: cover; border: 1px solid var(--rule); }
+.who { flex: 1; min-width: 0; }
+h1 { font-size: 2.3rem; line-height: 1.15; letter-spacing: -.01em; margin: 0; }
+.role { color: var(--mute); margin: .45rem 0 .35rem; line-height: 1.45; }
+.role span { display: block; }
+.role .pos { color: var(--fg); }
+.links { margin: 0; font-size: .95rem; }
+.links a { display: inline-block; white-space: nowrap; margin-right: .95rem; }
+header + p { margin-top: 2.2rem; }
+
+.tt {
+  position: absolute; top: 1.5rem; right: 1.25rem; width: 34px; height: 34px;
+  display: grid; place-items: center; padding: 0; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 50%; background: none; color: var(--mute);
+}
+.tt:hover { color: var(--accent); border-color: var(--accent-dim); }
+.tt svg { width: 16px; height: 16px; }
+.tt .moon { display: none; }
+:root[data-theme="light"] .tt .sun { display: none; }
+:root[data-theme="light"] .tt .moon { display: block; }
+
+/* Sections */
+h2 { font-size: 1.45rem; line-height: 1.3; margin: 3rem 0 .4rem; }
+.lede { color: var(--mute); margin: 0 0 1.4rem; }
+
+/* "Organize by" switch */
+.organize { display: none; margin: 0 0 .75rem; }
+.js .organize { display: block; }
+.organize .lab { display: block; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: .45rem; }
+.seg { display: flex; flex-wrap: wrap; gap: .4rem; }
+.seg button {
+  font: inherit; font-size: .85rem; line-height: 1.3; padding: .32rem .75rem; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; background: none; color: var(--fg);
+}
+.seg button:hover { border-color: var(--accent-dim); }
+.seg button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--panel-on); }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.why {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-style: italic;
+  font-size: 1.06rem; line-height: 1.55; margin: 0 0 1rem; max-width: 40rem;
+}
+.taxo { display: none; }
+.taxo.on { display: block; }
+
+/* Panels */
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.panels.c3 { grid-template-columns: repeat(3, 1fr); }
+.panel {
+  font: inherit; color: inherit; text-align: left; cursor: pointer; position: relative;
+  display: flex; flex-direction: column; gap: .25rem; padding: 1rem 2.6rem 1.05rem 1.1rem;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--panel);
+  transition: border-color .15s, background-color .15s;
+}
+.panel.wide { grid-column: 1 / -1; }
+.panel:hover { background: var(--panel-hover); border-color: var(--accent-dim); }
+.panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.panel[aria-expanded="true"] { background: var(--panel-on); border-color: var(--accent); }
+.k { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.pt { font-weight: 600; font-size: 1.02rem; line-height: 1.35; }
+.pm { font-size: .82rem; color: var(--mute); margin-top: auto; padding-top: .3rem; }
+.pm b { color: var(--fg); font-weight: 600; }
+.pm .v { white-space: nowrap; }
+.ic { position: absolute; top: 1.05rem; right: 1rem; width: 13px; height: 13px; transition: transform .2s ease; }
+.ic::before, .ic::after { content: ""; position: absolute; background: var(--accent); border-radius: 1px; }
+.ic::before { left: 0; right: 0; top: 6px; height: 1.5px; }
+.ic::after { top: 0; bottom: 0; left: 6px; width: 1.5px; }
+.panel[aria-expanded="true"] .ic { transform: rotate(45deg); }
+
+/* Paper lists that open under a panel */
+.drawer { grid-column: 1 / -1; border-left: 3px solid var(--accent); padding: .5rem 0 .15rem 1.15rem; margin: .4rem 0 .65rem; display: none; }
+.drawer.open { display: block; animation: in .22s ease-out; }
+@keyframes in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .drawer.open { animation: none; } .ic { transition: none; } }
+.pubs li { margin: 0 0 .9rem; font-size: .95rem; }
+.pubs .ti { font-weight: 500; display: block; }
+.pubs .au { display: block; color: var(--mute); font-size: .88rem; }
+.pubs .ve { font-size: .88rem; color: var(--mute); }
+.pubs .ve b { color: var(--fg); }
+.pubs .tg { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-left: .4rem; }
+.sub { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin: 1.1rem 0 .55rem; }
+.sub:first-child { margin-top: .2rem; }
+.yr { font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin: 1.2rem 0 .5rem; }
+
+.more { margin: 1.1rem 0 0; font-size: .92rem; color: var(--mute); }
+.textbtn { font: inherit; background: none; border: 0; padding: 0; color: var(--a); cursor: pointer; }
+.textbtn:hover { text-decoration: underline; }
+.textbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.alldrawer { margin-top: 1rem; }
+
+.thesis { border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); padding: .8rem 1.1rem .85rem; margin: 1.4rem 0 0; }
+.thesis .k { display: block; margin-bottom: .15rem; }
+.thesis .tt2 { display: block; font-size: .95rem; line-height: 1.45; }
+.thesis .tm { display: block; font-size: .82rem; color: var(--mute); margin-top: .2rem; }
+
+/* News and recognition */
+.rows li { display: grid; grid-template-columns: 5.4rem 1fr; gap: .75rem; margin: 0 0 .5rem; }
+.rows .y { color: var(--mute); font-variant-numeric: tabular-nums; font-size: .9rem; padding-top: .08rem; }
+
+footer { margin-top: 3.5rem; color: var(--mute); font-size: .82rem; border-top: 1px solid var(--rule); padding-top: 1rem; }
+
+@media (max-width: 640px) {
+  main { padding-top: 2.5rem; }
+  h1 { font-size: 1.95rem; }
+  .panels, .panels.c3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  header { flex-wrap: wrap; gap: 1rem; }
+  .me { width: 96px; height: 96px; }
+  .who { flex-basis: 100%; }
+}
+
+/* Photo with initials as a fallback when face.jpg is missing */
+.me { position: relative; display: grid; place-items: center; overflow: hidden; background: var(--panel); color: var(--mute); font-size: 1.6rem; letter-spacing: .04em; }
+.me img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+</style>
+<script>
+  document.documentElement.classList.add("js");
+  try { if (localStorage.getItem("theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
+</script>
+</head>
+<body data-scholar="https://scholar.google.com/citations?user=DMI5W9wAAAAJ">
+<main>
+
+<header>
+  <div class="me"><span aria-hidden="true">PK</span><img src="face.jpg" alt="Panagiotis Koromilas" onerror="this.remove()"></div>
+  <div class="who">
+    <h1 class="serif">Panagiotis Koromilas</h1>
+    <p class="role"><span class="pos">Postdoctoral Researcher</span><span>University of Athens and The Cyprus Institute</span></p>
+    <p class="links">
+      <a href="mailto:pakoromilas@di.uoa.gr">pakoromilas@di.uoa.gr</a>
+      <a href="https://scholar.google.com/citations?user=DMI5W9wAAAAJ">Google Scholar</a>
+      <a href="https://github.com/pakoromilas">GitHub</a>
+      <a href="https://www.linkedin.com/in/panagiotis-koromilas-426a12b7/">LinkedIn</a>
+    </p>
+  </div>
+  <button class="tt" type="button" aria-label="Switch to light theme">
+    <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+  </button>
+</header>
+
+<p>I am a postdoctoral researcher at the National and Kapodistrian University of Athens (NKUA), where I work with <a href="https://scholar.google.com/citations?user=z1bkjU8AAAAJ">Yannis Panagakis</a>, and at The Cyprus Institute, where I work with <a href="https://scholar.google.com/citations?user=R9x_bZ8AAAAJ">Mihalis Nicolaou</a>. From 2021 to 2026 I worked at NCSR “Demokritos” with <a href="https://scholar.google.com/citations?user=BeIoqhwAAAAJ">Theodoros Giannakopoulos</a>. I received my Ph.D. in Computer Science from NKUA in June 2026 under the supervision of Yannis Panagakis, supported by a competitive national Ph.D. Fellowship (14% acceptance rate). I also hold an integrated M.Eng. in Electrical and Computer Engineering from the National Technical University of Athens, where my diploma thesis, supervised by <a href="https://scholar.google.com/citations?user=zFDLf0UAAAAJ">Dimitris Fotakis</a>, earned an honourable mention for the best 2023 paper in <em>Environmental and Resource Economics</em>.</p>
+
+<p>My research focuses on representation learning across self-supervised, multimodal, and supervised settings as well as interpretability. I develop theoretically grounded methods that induce efficiency, robustness, and generalization and that transfer across domains such as imagery, language, audio-visual data, cryo-EM, and Earth Observation. My work has been published in the most competitive machine learning venues, including three first-author papers at ICML and a spotlight paper at NeurIPS 2026 (top 1.2%). I received a Gold Reviewer Award at ICML 2026 and regularly review for NeurIPS, ICML, ICLR, and CVPR.</p>
+
+<h2 class="serif">Research</h2>
+<p class="lede">Below you can see my research organized in three different ways, namely (i) by research area, (ii) by the questions it addresses and (iii) by data modality. Selecting a panel shows its papers, and a paper may appear in more than one category.</p>
+
+<div class="organize" role="group" aria-label="Organize papers by">
+  <span class="lab">Organize by</span>
+  <div class="seg" id="seg"></div>
+</div>
+<div id="views"></div>
+<noscript><p class="lede">The paper list needs JavaScript. All papers are also listed on <a href="https://scholar.google.com/citations?user=DMI5W9wAAAAJ">Google Scholar</a>.</p></noscript>
+
+<div class="thesis">
+  <span class="k">ph.d. thesis</span>
+  <span class="tt2">Principled Contrastive Learning: A Unified View of Self-Supervised, Supervised, and Multimodal Learning through Optimal Representation Geometry</span>
+  <span class="tm">National and Kapodistrian University of Athens, 2026</span>
+</div>
+
+<h2 class="serif">News</h2>
+<ul class="rows">
+  <li><span class="y">Sep 2026</span><span>fmxcoders accepted at NeurIPS 2026 as a <b>Spotlight</b>.</span></li>
+  <li><span class="y">Jun 2026</span><span>Ph.D. defended at NKUA, <em>Principled Contrastive Learning</em>.</span></li>
+  <li><span class="y">May 2026</span><span>Two first-author papers accepted at ICML 2026, Neural Collapse by Design and PolySAE.</span></li>
+  <li><span class="y">Apr 2026</span><span>Gold Reviewer Award at ICML 2026.</span></li>
+  <li><span class="y">Jan 2026</span><span>Joined NKUA as a postdoctoral Research Associate.</span></li>
+  <li><span class="y">Sep 2025</span><span>Joined The Cyprus Institute as a Machine Learning Research Engineer.</span></li>
+</ul>
+
+<h2 class="serif">Recognition</h2>
+<ul class="rows">
+  <li><span class="y">2026</span><span>Spotlight at NeurIPS 2026 for fmxcoders (top 1.2% of submissions)</span></li>
+  <li><span class="y">2026</span><span>Gold Reviewer Award, ICML 2026</span></li>
+  <li><span class="y">2026</span><span>Outstanding Reviewer, Mechanistic Interpretability Workshop at ICML 2026</span></li>
+  <li><span class="y">2024</span><span>Honourable mention, EAERE Award for Outstanding Publication in <em>Environmental and Resource Economics</em></span></li>
+  <li><span class="y">2023</span><span>HFRI Ph.D. Fellowship, 2023–2025 (14% acceptance rate)</span></li>
+</ul>
+
+<h2 class="serif">Service</h2>
+<p>Reviewer for ICLR 2026–27, NeurIPS 2026, ICML 2026, CVPR 2026, IEEE TPAMI 2025, IEEE Transactions on Multimedia 2024, ICASSP 2024–25.</p>
+
+<footer>Last updated October 2026</footer>
+</main>
+
+<!-- ============================================================
+     PAPERS: the only part that changes when a paper is added.
+     ============================================================ -->
+<script>
+// Papers shown on the website, ordered from most to least significant.
+// The order of this list is the order used everywhere on the site, so a new
+// paper is inserted at its place. Venue counts first and first authorship
+// second, and a Spotlight or Oral lifts a paper within its tier.
+//
+// Fields
+//   title         paper title
+//   authors       initials and surname, my name written exactly "P. Koromilas"
+//   venue         shown in paper lists, e.g. "ICML 2026" or "arXiv preprint, 2026"
+//   short         shown on the panels, e.g. "ICML 2026", "IJCV", "arXiv"
+//   note          "Spotlight", "Oral" or an award, otherwise ""
+//   preprint      true for arXiv and bioRxiv papers (listed after published venues on panels)
+//   links         any of pdf, paper, code
+//   areas         self-supervised | supervised | interpretability | multimodal | affective computing
+//   questions     understanding methods | understanding models | applications
+//   application   only with "applications": Cryo-EM | Earth observation | Emotion and sentiment | Audio-visual analysis
+//   modalities    images | language models | speech & text | video | earth observation | cryo-EM
+//   label         optional tag for a paper outside every category (e.g. "economics")
+//
+// A paper may have several categories in each view.
+
+window.PAPERS = [
+  {
+    title: "Neural Collapse by Design: Learning Class Prototypes on the Hypersphere",
+    authors: ["P. Koromilas", "T. Giannakopoulos", "M. A. Nicolaou", "Y. Panagakis"],
+    venue: "ICML 2026",
+    short: "ICML 2026",
+    note: "",
+    links: { pdf: "https://arxiv.org/abs/2605.20302", code: "https://github.com/pakoromilas/nc_by_design" },
+    areas: ["supervised"],
+    questions: ["understanding methods"],
+    modalities: ["images"],
+  },
+  {
+    title: "PolySAE: Modeling Feature Interactions in Sparse Autoencoders via Polynomial Decoding",
+    authors: ["P. Koromilas", "A. D. Demou", "J. Oldfield", "Y. Panagakis", "M. A. Nicolaou"],
+    venue: "ICML 2026",
+    short: "ICML 2026",
+    note: "",
+    links: { pdf: "https://arxiv.org/abs/2602.01322", code: "https://github.com/pakoromilas/PolySAE" },
+    areas: ["interpretability"],
+    questions: ["understanding models"],
+    modalities: ["language models"],
+  },
+  {
+    title: "fmxcoders: Factorized Masked Crosscoders for Cross-Layer Feature Discovery",
+    authors: ["A. D. Demou", "P. Koromilas", "J. Oldfield", "Y. Panagakis", "M. A. Nicolaou"],
+    venue: "NeurIPS 2026",
+    short: "NeurIPS 2026",
+    note: "Spotlight",
+    links: { pdf: "https://arxiv.org/abs/2605.09438" },
+    areas: ["interpretability"],
+    questions: ["understanding models"],
+    modalities: ["language models"],
+  },
+  {
+    title: "Bridging Mini-Batch and Asymptotic Analysis in Contrastive Learning: From InfoNCE to Kernel-Based Losses",
+    authors: ["P. Koromilas", "G. Bouritsas", "T. Giannakopoulos", "M. A. Nicolaou", "Y. Panagakis"],
+    venue: "ICML 2024",
+    short: "ICML 2024",
+    note: "",
+    links: { pdf: "https://arxiv.org/abs/2405.18045", code: "https://github.com/pakoromilas/DHEL-KCL" },
+    areas: ["self-supervised"],
+    questions: ["understanding methods"],
+    modalities: ["images"],
+  },
+  {
+    title: "A Principled Framework for Multi-View Contrastive Learning",
+    authors: ["P. Koromilas", "E. Georgiou", "G. Bouritsas", "T. Giannakopoulos", "M. A. Nicolaou", "Y. Panagakis"],
+    venue: "arXiv preprint, 2025",
+    short: "arXiv",
+    note: "",
+    preprint: true,
+    links: { pdf: "https://arxiv.org/abs/2507.06979", code: "https://github.com/pakoromilas/Multi-View-CL" },
+    areas: ["self-supervised", "multimodal"],
+    questions: ["understanding methods"],
+    modalities: ["images"],
+  },
+  {
+    title: "LoCA: Enabling Multi-Modality in Geospatial Location Encoders",
+    authors: ["P. Koromilas", "E. Vali", "et al."],
+    venue: "arXiv preprint, 2026",
+    short: "arXiv",
+    note: "",
+    preprint: true,
+    links: { pdf: "https://arxiv.org/abs/2610.32894" },
+    areas: ["self-supervised", "multimodal"],
+    questions: ["applications"],
+    modalities: ["earth observation"],
+    application: "Earth observation",
+  },
+  {
+    title: "Disentangling Local and Global Semantics in Diffusion Models for Image Editing",
+    authors: ["M. Plitsis", "T. Kouzelis", "P. Koromilas", "V. Katsouros", "M. A. Nicolaou", "et al."],
+    venue: "International Journal of Computer Vision, 2026",
+    short: "IJCV",
+    note: "",
+    links: { paper: "https://doi.org/10.1007/s11263-025-02694-y" },
+    areas: ["interpretability"],
+    questions: ["understanding models"],
+    modalities: ["images"],
+  },
+  {
+    title: "MMATR: A Lightweight Approach for Multimodal Sentiment Analysis Based on Tensor Methods",
+    authors: ["P. Koromilas", "M. A. Nicolaou", "T. Giannakopoulos", "Y. Panagakis"],
+    venue: "ICASSP 2023",
+    short: "ICASSP 2023",
+    note: "Oral",
+    links: { paper: "https://ieeexplore.ieee.org/document/10097030" },
+    areas: ["multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text", "video"],
+    application: "Emotion and sentiment",
+  },
+  {
+    title: "Modeling Intertemporal Trading of Emission Permits Under Market Power",
+    authors: ["P. Koromilas", "A. Mathioudaki", "S. Dimos", "D. Fotakis"],
+    venue: "<em>Environmental and Resource Economics</em>, 2023",
+    short: "ERE",
+    note: "Best-paper honourable mention",
+    links: { paper: "https://doi.org/10.1007/s10640-022-00723-9" },
+    areas: [],
+    questions: [],
+    modalities: [],
+    label: "economics",
+  },
+  {
+    title: "Self-Supervised Learning for Generalizable Particle Picking in Cryo-EM Micrographs",
+    authors: ["A. Zamanos", "P. Koromilas", "G. Bouritsas", "P. L. Kastritis", "Y. Panagakis"],
+    venue: "Cell Reports Methods, 2025",
+    short: "Cell Reports Methods",
+    note: "",
+    links: { paper: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12296464/" },
+    areas: ["self-supervised"],
+    questions: ["applications"],
+    modalities: ["cryo-EM"],
+    application: "Cryo-EM",
+  },
+  {
+    title: "Deep Multimodal Emotion Recognition on Human Speech: A Review",
+    authors: ["P. Koromilas", "T. Giannakopoulos"],
+    venue: "Applied Sciences, 2021",
+    short: "Applied Sciences",
+    note: "",
+    links: { paper: "https://doi.org/10.3390/app11177962" },
+    areas: ["multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Emotion and sentiment",
+  },
+  {
+    title: "Rethinking Objectives for Multi-View and Multi-Modal Contrastive Learning",
+    authors: ["P. Koromilas", "E. Georgiou", "G. Bouritsas", "T. Giannakopoulos", "M. A. Nicolaou", "Y. Panagakis"],
+    venue: "UniReps Workshop at NeurIPS 2025",
+    short: "UniReps 2025",
+    note: "",
+    links: { paper: "https://neurips.cc/virtual/2025/127141" },
+    areas: ["self-supervised", "multimodal"],
+    questions: ["understanding methods"],
+    modalities: ["images"],
+  },
+  {
+    title: "A Dataset for Speech Emotion Recognition in Greek Theatrical Plays",
+    authors: ["M. Moutti", "S. Eleftheriou", "P. Koromilas", "T. Giannakopoulos"],
+    venue: "LREC 2022",
+    short: "LREC 2022",
+    note: "",
+    links: { paper: "https://aclanthology.org/2022.lrec-1.111" },
+    areas: ["affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Emotion and sentiment",
+  },
+  {
+    title: "A 37-Million-Particle Dataset from over 250 Experiments to Accelerate Data-Driven Cryo-EM Analysis",
+    authors: ["A. Zamanos", "F. L. Kyrilis", "P. Koromilas", "P. L. Kastritis", "Y. Panagakis"],
+    venue: "bioRxiv preprint, 2026",
+    short: "bioRxiv",
+    note: "",
+    preprint: true,
+    links: { pdf: "https://doi.org/10.1101/2026.04.29.720997" },
+    areas: ["self-supervised"],
+    questions: ["applications"],
+    modalities: ["cryo-EM"],
+    application: "Cryo-EM",
+  },
+  {
+    title: "Towards Generalizable Particle Picking in Cryo-EM Images by Leveraging Masked AutoEncoders",
+    authors: ["A. Zamanos", "P. Koromilas", "G. Bouritsas", "P. L. Kastritis", "Y. Panagakis"],
+    venue: "ICML 2024 Workshop",
+    short: "ICML workshop",
+    note: "",
+    links: { paper: "https://icml.cc/virtual/2024/35944" },
+    areas: ["self-supervised"],
+    questions: ["applications"],
+    modalities: ["cryo-EM"],
+    application: "Cryo-EM",
+  },
+  {
+    title: "Multimodal Summarization of User-Generated Videos",
+    authors: ["T. Psallidas", "P. Koromilas", "T. Giannakopoulos", "E. Spyrou"],
+    venue: "Applied Sciences, 2021",
+    short: "Applied Sciences",
+    note: "",
+    links: { paper: "https://doi.org/10.3390/app11115260" },
+    areas: ["multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["video"],
+    application: "Audio-visual analysis",
+  },
+  {
+    title: "Unsupervised Multimodal Language Representations Using Convolutional Autoencoders",
+    authors: ["P. Koromilas", "T. Giannakopoulos"],
+    venue: "arXiv preprint, 2021",
+    short: "arXiv",
+    note: "",
+    preprint: true,
+    links: { pdf: "https://arxiv.org/abs/2110.03007" },
+    areas: ["self-supervised", "multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Emotion and sentiment",
+  },
+  {
+    title: "Film Shot Type Classification Based on Camera Movement Styles",
+    authors: ["A. Petrogianni", "P. Koromilas", "T. Giannakopoulos"],
+    venue: "IbPRIA 2022",
+    short: "IbPRIA 2022",
+    note: "",
+    areas: ["affective computing"],
+    questions: ["applications"],
+    modalities: ["video"],
+    application: "Audio-visual analysis",
+  },
+  {
+    title: "Automatic Assessment of Speaking Skills Using Aural and Textual Information",
+    authors: ["S. Eleftheriou", "P. Koromilas", "T. Giannakopoulos"],
+    venue: "ICNLSP 2021",
+    short: "ICNLSP 2021",
+    note: "",
+    links: { paper: "https://aclanthology.org/2021.icnlsp-1.19" },
+    areas: ["multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Audio-visual analysis",
+  },
+  {
+    title: "Cross-Linguistic Speech Emotion Recognition Using CNNs: A Use-Case in Greek Theatrical Data",
+    authors: ["M. Moutti", "S. Eleftheriou", "P. Koromilas", "T. Giannakopoulos"],
+    venue: "PETRA 2022",
+    short: "PETRA 2022",
+    note: "",
+    areas: ["affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Emotion and sentiment",
+  },
+  {
+    title: "Smart Subs Subtitling App for Watching Live Virtual Dome Performances",
+    authors: ["D. Christopoulos", "E. Chatzi", "G. Sofianopoulos", "E. Patiniotaki", "S. Eleftheriou", "…", "P. Koromilas", "…"],
+    venue: "SMAP 2023",
+    short: "SMAP 2023",
+    note: "",
+    links: { paper: "https://ieeexplore.ieee.org/document/10255166" },
+    areas: ["multimodal", "affective computing"],
+    questions: ["applications"],
+    modalities: ["speech & text"],
+    application: "Audio-visual analysis",
+  },
+];
+
+// Theses, listed at the end of "All papers".
+window.THESES = [
+  {
+    title: "Principled Contrastive Learning: A Unified View of Self-Supervised, Supervised, and Multimodal Learning through Optimal Representation Geometry",
+    authors: ["P. Koromilas"],
+    venue: "Ph.D. thesis, National and Kapodistrian University of Athens, 2026",
+    note: "",
+  },
+  {
+    title: "Modeling Intertemporal Trading and Management of Emission Permits in Greenhouse Gas Emission Trading Systems",
+    authors: ["P. Koromilas"],
+    venue: "Diploma thesis, National Technical University of Athens, 2020",
+    note: "",
+    links: { pdf: "https://dspace.lib.ntua.gr/xmlui/handle/123456789/52583" },
+  },
+];
+</script>
+
+<script>
+  // The three ways of organizing the papers. "cat" must match the category names used in papers.js.
+  window.VIEWS = [
+    {
+      name: "Areas", key: "areas", cols: 2,
+      why: "My research is driven by understanding the principles that govern learning and by turning them into methods across the main areas of machine learning.",
+      panels: [
+        { cat: "self-supervised", title: "Contrastive learning and label-free pretraining" },
+        { cat: "supervised", title: "Supervised learning on the hypersphere" },
+        { cat: "interpretability", title: "Understanding pretrained models" },
+        { cat: "multimodal", title: "Multimodal and multi-view learning" },
+        { cat: "affective computing", title: "Emotion recognition and audio-visual analysis" }
+      ]
+    },
+    {
+      name: "Questions", key: "questions", cols: 3,
+      why: "My research is guided by understanding why learning methods produce the desired behaviour, how this behaviour is manifested in trained models and how it transfers to applications.",
+      panels: [
+        { cat: "understanding methods", title: "Why learning objectives work" },
+        { cat: "understanding models", title: "What pretrained models encode" },
+        { cat: "applications", title: "Where representations make a difference",
+          groups: ["Cryo-EM", "Earth observation", "Emotion and sentiment", "Audio-visual analysis"] }
+      ]
+    },
+    {
+      name: "Modalities", key: "modalities", cols: 3,
+      why: "My research seeks principles that hold across very different kinds of data, and it spans images, language, speech, video, geospatial data and cryo-EM micrographs.",
+      panels: [
+        { cat: "images", title: "Natural images" },
+        { cat: "language models", title: "Large language models" },
+        { cat: "speech & text", title: "Speech and language" },
+        { cat: "video", title: "Video" },
+        { cat: "earth observation", title: "Geospatial data" },
+        { cat: "cryo-EM", title: "Cryo-electron micrographs" }
+      ]
+    }
+  ];
+</script>
+
+<!-- Builds the Research section. Nothing here changes when a paper is added. -->
+<script>
+// Builds the Research section from papers.js and the VIEWS list in index.html.
+// Nothing here needs to change when a paper is added.
+(function () {
+  "use strict";
+
+  var ME = "P. Koromilas";
+  var LINK_ORDER = ["pdf", "paper", "code"];
+  var root = document.documentElement;
+
+  /* Light / dark switch */
+  var tt = document.querySelector(".tt");
+  function themeLabel() {
+    tt.setAttribute("aria-label", root.dataset.theme === "light" ? "Switch to dark theme" : "Switch to light theme");
+  }
+  themeLabel();
+  tt.addEventListener("click", function () {
+    if (root.dataset.theme === "light") { delete root.dataset.theme; } else { root.dataset.theme = "light"; }
+    try { localStorage.setItem("theme", root.dataset.theme || "dark"); } catch (e) { /* storage unavailable */ }
+    themeLabel();
+  });
+
+  var PAPERS = window.PAPERS || [];
+  var THESES = window.THESES || [];
+  var VIEWS = window.VIEWS || [];
+  var SCHOLAR = document.body.getAttribute("data-scholar") || "#";
+
+  /* One paper as a list item */
+  function authors(p) {
+    return p.authors.map(function (a) { return a.indexOf(ME) === 0 ? "<b>" + a + "</b>" : a; }).join(", ");
+  }
+  function links(p) {
+    var l = p.links || {};
+    var keys = LINK_ORDER.filter(function (k) { return l[k]; });
+    if (!keys.length) return "";
+    return "[" + keys.map(function (k) { return '<a href="' + l[k] + '">' + k + "</a>"; }).join(" | ") + "]";
+  }
+  function item(p, tags) {
+    var note = p.note ? " · <b>" + p.note + "</b>" : "";
+    var tg = (tags || []).map(function (t) { return '<span class="tg">' + t + "</span>"; }).join("");
+    return '<li><span class="ti">' + p.title + '</span><span class="au">' + authors(p) + "</span>" +
+      '<span class="ve">' + p.venue + note + "</span> " + links(p) + tg + "</li>";
+  }
+  function list(papers) {
+    return '<ul class="pubs">' + papers.map(function (p) { return item(p); }).join("") + "</ul>";
+  }
+
+  /* Up to three venues shown on a panel, published venues before preprints */
+  function venues(papers) {
+    var seen = {}, published = [], preprints = [];
+    papers.forEach(function (p) {
+      if (!p.short) return;
+      var label = p.short + (/^(spotlight|oral)$/i.test(p.note || "") ? " <b>" + p.note + "</b>" : "");
+      if (seen[label]) return;
+      seen[label] = true;
+      (p.preprint ? preprints : published).push(label);
+    });
+    return published.concat(preprints).slice(0, 3);
+  }
+
+  function inPanel(p, view, panel) {
+    return (p[view.key] || []).indexOf(panel.cat) >= 0;
+  }
+
+  /* Build every view */
+  var seg = document.getElementById("seg");
+  var host = document.getElementById("views");
+
+  VIEWS.forEach(function (view, o) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = view.name;
+    btn.setAttribute("aria-pressed", o === 0 ? "true" : "false");
+    seg.appendChild(btn);
+
+    var panels = "", drawers = "";
+    view.panels.forEach(function (panel, i) {
+      var papers = PAPERS.filter(function (p) { return inPanel(p, view, panel); });
+      var wide = view.cols !== 3 && view.panels.length % 2 === 1 && i === view.panels.length - 1 ? " wide" : "";
+      var meta = [papers.length + (papers.length === 1 ? " paper" : " papers")].concat(venues(papers));
+      var metaHtml = meta.map(function (m, j) {
+        return '<span class="v">' + m + (j < meta.length - 1 ? "&nbsp;·" : "") + "</span>";
+      }).join(" ");
+      panels += '<button class="panel' + wide + '" id="b-' + o + "-" + i + '" aria-expanded="false" aria-controls="t-' + o + "-" + i + '">' +
+        '<span class="k">' + panel.cat + '</span><span class="pt">' + panel.title + '</span><span class="pm">' + metaHtml + "</span>" +
+        '<span class="ic" aria-hidden="true"></span></button>';
+
+      var body;
+      if (panel.groups) {
+        var groups = panel.groups.slice();
+        papers.forEach(function (p) { if (groups.indexOf(p.application || "Other") < 0) groups.push(p.application || "Other"); });
+        body = groups.map(function (g) {
+          var ps = papers.filter(function (p) { return (p.application || "Other") === g; });
+          return ps.length ? '<p class="sub">' + g + "</p>" + list(ps) : "";
+        }).join("");
+      } else {
+        body = list(papers);
+      }
+      drawers += '<div class="drawer" id="t-' + o + "-" + i + '" role="region" aria-labelledby="b-' + o + "-" + i + '">' + body + "</div>";
+    });
+
+    var all = '<ul class="pubs">' + PAPERS.map(function (p) {
+      var tags = p[view.key] && p[view.key].length ? p[view.key] : (p.label ? [p.label] : []);
+      return item(p, tags);
+    }).join("") + "</ul>";
+    if (THESES.length) all += '<p class="yr">Theses</p>' + list(THESES);
+
+    var box = document.createElement("div");
+    box.className = "taxo" + (o === 0 ? " on" : "");
+    box.id = "view-" + o;
+    box.innerHTML = '<p class="why">' + view.why + "</p>" +
+      '<div class="panels' + (view.cols === 3 ? " c3" : "") + '">' + panels + drawers + "</div>" +
+      '<p class="more"><button class="textbtn show-all" type="button" aria-expanded="false" aria-controls="all-' + o + '">All papers</button>' +
+      ' · Also on <a href="' + SCHOLAR + '">Google Scholar</a></p>' +
+      '<div class="drawer alldrawer" id="all-' + o + '" role="region" aria-label="All papers">' + all + "</div>";
+    host.appendChild(box);
+
+    /* Help for maintenance: papers without a category in this view */
+    PAPERS.forEach(function (p) {
+      if (!p.label && !view.panels.some(function (panel) { return inPanel(p, view, panel); })) {
+        console.warn('"' + p.title + '" has no category in the ' + view.name + " view.");
+      }
+    });
+  });
+
+  /* Opening and closing panels */
+  function setup(scope) {
+    var grid = scope.querySelector(".panels");
+    var panels = Array.prototype.slice.call(grid.querySelectorAll(".panel"));
+    var drawers = panels.map(function (p) { return document.getElementById(p.getAttribute("aria-controls")); });
+    var allBtn = scope.querySelector(".show-all");
+    var allDrawer = document.getElementById(allBtn.getAttribute("aria-controls"));
+    var open = null;
+
+    function cols() { return getComputedStyle(grid).gridTemplateColumns.split(" ").length; }
+    function place(i) {
+      var c = panels[i].classList.contains("wide") ? 1 : cols();
+      var end = c === 1 ? i : Math.min(panels.length - 1, Math.floor(i / c) * c + c - 1);
+      if (panels[end].nextElementSibling !== drawers[i]) panels[end].after(drawers[i]);
+    }
+    function btn(i) { return i === "all" ? allBtn : panels[i]; }
+    function drawer(i) { return i === "all" ? allDrawer : drawers[i]; }
+    function set(i, on) { btn(i).setAttribute("aria-expanded", on ? "true" : "false"); drawer(i).classList.toggle("open", on); }
+    function close() { if (open !== null) { set(open, false); open = null; } }
+    function toggle(i) {
+      var b = btn(i), before = b.getBoundingClientRect().top, was = open;
+      close();
+      if (was !== i) { if (i !== "all") place(i); set(i, true); open = i; }
+      var shift = b.getBoundingClientRect().top - before;
+      if (Math.abs(shift) > 1) window.scrollBy(0, shift);
+    }
+    panels.forEach(function (p, i) { p.addEventListener("click", function () { toggle(i); }); });
+    allBtn.addEventListener("click", function () { toggle("all"); });
+    return { close: close, relayout: function () { if (typeof open === "number") place(open); } };
+  }
+
+  var boxes = Array.prototype.slice.call(host.querySelectorAll(".taxo"));
+  var ctrls = boxes.map(setup);
+  var buttons = Array.prototype.slice.call(seg.querySelectorAll("button"));
+  buttons.forEach(function (b, k) {
+    b.addEventListener("click", function () {
+      boxes.forEach(function (box, j) { if (j !== k) ctrls[j].close(); box.classList.toggle("on", j === k); });
+      buttons.forEach(function (o, j) { o.setAttribute("aria-pressed", j === k ? "true" : "false"); });
+    });
+  });
+  window.addEventListener("resize", function () {
+    boxes.forEach(function (box, j) { if (box.classList.contains("on")) ctrls[j].relayout(); });
+  });
+})();
+</script>
+</body>
+</html>
